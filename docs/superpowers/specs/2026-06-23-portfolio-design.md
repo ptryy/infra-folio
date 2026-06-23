@@ -55,7 +55,8 @@ infra-folio/
 │   │   ├── sections/             # Hero, About, Skills, Projects, Blog, Contact
 │   │   └── islands/              # Interactive Astro islands
 │   │       ├── LiveTerminal.tsx  # Feature-flagged status + GitHub panel
-│   │       └── GithubFeed.tsx    # Open source activity feed (used by LiveTerminal)
+│   │       ├── GithubFeed.tsx    # Open source activity feed (used by LiveTerminal)
+│   │       └── Comments.tsx      # Giscus comments widget (blog posts only)
 │   ├── content/                  # Astro Content Collections
 │   │   ├── blog/                 # MDX posts
 │   │   └── projects/             # MDX project entries
@@ -116,6 +117,7 @@ Uses `@astrojs/cloudflare` adapter in **hybrid mode**. Pages default to static p
 **Astro Islands:**
 - `LiveTerminal.tsx` — hydrated with `client:visible`; receives `enabled` prop from parent. If `enabled=false`, component renders nothing and neither `api-worker` endpoint is called.
 - `GithubFeed.tsx` — composed inside `LiveTerminal`; polls `/github/feed` on mount and every 5 minutes.
+- `Comments.tsx` — Giscus widget rendered at the bottom of every `/blog/[slug]` page with `client:visible`. Backed by GitHub Discussions on this repo. Requires `GISCUS_REPO`, `GISCUS_REPO_ID`, `GISCUS_CATEGORY_ID` env vars (obtained from giscus.app configuration). No backend — all data lives in GitHub.
 - All other sections are zero-JS Astro components.
 
 **Content Collections schema:**
@@ -314,6 +316,7 @@ make r2-sync          # Mirror MinIO → R2 (used in CI before prod deploy)
 | Orchestration | GNU Make |
 | Local MinIO client | mc (MinIO Client CLI) |
 | Container runtime | Docker Compose |
+| Blog comments | Giscus (GitHub Discussions-backed) |
 
 ---
 
@@ -322,6 +325,6 @@ make r2-sync          # Mirror MinIO → R2 (used in CI before prod deploy)
 - CMS integrations (Sanity, Contentlayer, Notion) — MDX-in-repo is sufficient
 - Analytics beyond Cloudflare's built-in analytics
 - Authentication / admin panel
-- Comments system on blog posts
+- Admin panel or comment moderation UI (Giscus delegates moderation to GitHub Discussions)
 - Dark/light mode toggle (can be added later without architectural changes)
 - CI/CD pipeline (Makefile is the deploy mechanism; GitHub Actions can wrap it later)
