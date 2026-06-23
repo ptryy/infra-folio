@@ -44,10 +44,10 @@ infra-folio/
 │   │   ├── index.astro           # Main single-page sections
 │   │   ├── blog/
 │   │   │   ├── index.astro       # Blog listing (static)
-│   │   │   └── [slug].astro      # Post page (SSR — OG redirect)
+│   │   │   └── [slug].astro      # Post page (SSR — dynamic og:image meta tag)
 │   │   ├── projects/
 │   │   │   ├── index.astro       # Projects listing (static)
-│   │   │   └── [slug].astro      # Project page (SSR — OG redirect)
+│   │   │   └── [slug].astro      # Project page (SSR — dynamic og:image meta tag)
 │   │   └── api/
 │   │       └── contact.ts        # Edge contact form handler
 │   ├── components/
@@ -108,7 +108,7 @@ Uses `@astrojs/cloudflare` adapter in **hybrid mode**. Pages default to static p
 |---|---|---|
 | `/` | Static | All content is build-time deterministic |
 | `/blog/` | Static | Listing regenerated on deploy |
-| `/blog/[slug]` | SSR | Needs runtime `og-worker` URL with dynamic metadata |
+| `/blog/[slug]` | SSR | Emits dynamic `og:image` meta tag pointing to og-worker with title/description query params |
 | `/projects/` | Static | Listing regenerated on deploy |
 | `/projects/[slug]` | SSR | Same as blog slug |
 | `/api/contact` | SSR | Form submission handler |
@@ -178,7 +178,7 @@ The switch occurs at module initialization — the correct adapter is constructe
 media/
 ├── blog/{slug}/          # Post images, diagrams
 ├── projects/{slug}/      # Demo videos, screenshots
-├── og/{slug}.png         # Cached OG images (written by og-worker)
+├── og/{type}-{slug}.png  # Cached OG images (written by og-worker; type=blog|project)
 ├── assets/
 │   ├── resume.pdf
 │   └── avatar.{ext}
@@ -191,17 +191,19 @@ media/
 
 ### `og-worker`
 
-**Endpoint:** `GET /og?type=blog|project&slug={slug}`
+**Endpoint:** `GET /og?type=blog|project&slug={slug}&title={title}&description={description}`
+
+Metadata (title, description) is passed as query params from the slug page's SSR render — no KV lookup needed.
 
 **Flow:**
-1. Check R2 `og/{slug}.png` — return cached PNG immediately if found
-2. On miss: read post/project metadata, render PNG using Satori (HTML→SVG) + resvg-wasm (SVG→PNG)
-3. Write PNG to R2 `og/{slug}.png`
+1. Check R2 `og/{type}-{slug}.png` — return cached PNG immediately if found
+2. On miss: render PNG using Satori (HTML→SVG) + resvg-wasm (SVG→PNG) from query param metadata
+3. Write PNG to R2 `og/{type}-{slug}.png`
 4. Return PNG with `Cache-Control: public, max-age=31536000, immutable`
 
 **Cache invalidation:** `make og-purge SLUG={slug}` deletes the R2 key. `make og-gen` pre-warms all slugs at deploy time.
 
-**Bindings:** `MEDIA_BUCKET` (R2), `OG_META` (KV)
+**Bindings:** `MEDIA_BUCKET` (R2)
 
 ---
 
