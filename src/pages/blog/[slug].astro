@@ -3,6 +3,7 @@ export const prerender = false
 
 import { getEntry } from 'astro:content'
 import Layout from '../../components/layout/Layout.astro'
+import Comments from '../../components/islands/Comments'
 
 const { slug } = Astro.params
 if (!slug) return Astro.redirect('/blog/')
@@ -14,6 +15,10 @@ const { Content } = await post.render()
 
 const domain = import.meta.env.DOMAIN ?? Astro.url.hostname
 const ogUrl = `https://og.${domain}/og?type=blog&slug=${encodeURIComponent(slug)}&title=${encodeURIComponent(post.data.title)}&description=${encodeURIComponent(post.data.excerpt)}`
+
+const giscusRepo = import.meta.env.GISCUS_REPO ?? ''
+const giscusRepoId = import.meta.env.GISCUS_REPO_ID ?? ''
+const giscusCategoryId = import.meta.env.GISCUS_CATEGORY_ID ?? ''
 ---
 <Layout
   title={`${post.data.title} — Phuc Truong`}
@@ -40,6 +45,14 @@ const ogUrl = `https://og.${domain}/og?type=blog&slug=${encodeURIComponent(slug)
     <div class="prose">
       <Content />
     </div>
+    {giscusRepo && giscusRepoId && giscusCategoryId && (
+      <Comments
+        repo={giscusRepo}
+        repoId={giscusRepoId}
+        categoryId={giscusCategoryId}
+        client:visible
+      />
+    )}
   </article>
 </Layout>
 
