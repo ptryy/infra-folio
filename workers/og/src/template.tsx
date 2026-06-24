@@ -13,6 +13,9 @@ export async function renderOgSvg({ title, description, type }: OgParams): Promi
   const label = type === 'blog' ? 'Blog Post' : 'Project'
   const accentColor = type === 'blog' ? '#6366f1' : '#10b981'
 
+  // satori accepts plain VNode objects at runtime, but its TS types expect a
+  // React.ReactNode. Cast the element argument to satisfy the compiler without
+  // adding a react import.
   return satori(
     {
       type: 'div',
@@ -102,7 +105,7 @@ export async function renderOgSvg({ title, description, type }: OgParams): Promi
           },
         ],
       },
-    },
+    } as unknown as Parameters<typeof satori>[0],
     {
       width: 1200,
       height: 630,
