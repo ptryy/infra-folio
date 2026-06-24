@@ -2,6 +2,10 @@
   "name": "infra-folio-og",
   "version": "0.0.1",
   "private": true,
+  "dependencies": {
+    "satori": "^0.10.14",
+    "@resvg/resvg-wasm": "^2.6.2"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240909.0",
     "wrangler": "^3.75.0"

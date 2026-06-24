@@ -6,3 +6,8 @@ compatibility_flags = ["nodejs_compat"]
 [[r2_buckets]]
 binding = "MEDIA_BUCKET"
 bucket_name = "infra-folio-media"
+
+[[rules]]
+type = "CompiledWasm"
+globs = ["**/*.wasm"]
+fallthrough = true
