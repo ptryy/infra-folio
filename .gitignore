@@ -12,6 +12,7 @@ dist/
 # Environment
 .env
 .env.local
+.dev.vars
 
 # OS
 .DS_Store
