@@ -19,6 +19,15 @@ function jsonResponse(data: unknown, status: number): Response {
   })
 }
 
+function escapeHtml(input: string): string {
+  return input
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 export async function POST({ request, locals }: APIContext): Promise<Response> {
   let body: ContactBody
   try {
@@ -51,11 +60,11 @@ export async function POST({ request, locals }: APIContext): Promise<Response> {
     body: JSON.stringify({
       from: 'infra-folio <contact@noreply.phuctruong.dev>',
       to: [toEmail],
-      subject: `Portfolio contact from ${name}`,
+      subject: `Portfolio contact from ${escapeHtml(name)}`,
       html: `
-        <p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
+        <p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
       reply_to: email,
     }),
