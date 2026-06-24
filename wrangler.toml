@@ -1,0 +1,13 @@
+name = "infra-folio"
+main = "./dist/_worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+[vars]
+ENVIRONMENT = "prod"
+LIVE_TERMINAL = "false"
+CONTACT_FORM = "true"
