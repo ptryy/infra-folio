@@ -89,6 +89,47 @@ async function handleGithubFeed(env: Env): Promise<Response> {
   return json({ events, cached: false })
 }
 
-async function handleGithubStats(_env: Env): Promise<Response> {
-  return json({ stars: 0, commits: 0 })
+async function handleGithubStats(env: Env): Promise<Response> {
+  const CACHE_KEY = `github:stats:${GITHUB_USERNAME}`
+
+  const cached = await kvGet<{ stars: number; repos: number; followers: number }>(
+    env.GITHUB_CACHE,
+    CACHE_KEY
+  )
+  if (cached) {
+    return json({ ...cached, cached: true })
+  }
+
+  const userRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, {
+    headers: githubHeaders(env),
+  })
+
+  if (!userRes.ok) {
+    return json({ error: `GitHub API error: ${userRes.status}` }, 502)
+  }
+
+  const user = await userRes.json() as {
+    public_repos: number
+    followers: number
+    public_gists: number
+  }
+
+  // Fetch total stars by summing across repos (first page, up to 100 repos)
+  const reposRes = await fetch(
+    `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=pushed`,
+    {
+      headers: githubHeaders(env),
+    }
+  )
+
+  let stars = 0
+  if (reposRes.ok) {
+    const repos = await reposRes.json() as Array<{ stargazers_count: number }>
+    stars = repos.reduce((sum, r) => sum + r.stargazers_count, 0)
+  }
+
+  const stats = { stars, repos: user.public_repos, followers: user.followers }
+  await kvSet(env.GITHUB_CACHE, CACHE_KEY, stats, GITHUB_CACHE_TTL)
+
+  return json({ ...stats, cached: false })
 }
