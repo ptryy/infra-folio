@@ -1,13 +1,13 @@
 ---
 export const prerender = false
 
-import { getEntryBySlug } from 'astro:content'
+import { getEntry } from 'astro:content'
 import Layout from '../../components/layout/Layout.astro'
 
 const { slug } = Astro.params
 if (!slug) return Astro.redirect('/blog/')
 
-const post = await getEntryBySlug('blog', slug)
+const post = await getEntry('blog', slug)
 if (!post) return new Response('Not found', { status: 404 })
 
 const { Content } = await post.render()
