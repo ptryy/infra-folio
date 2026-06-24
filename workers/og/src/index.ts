@@ -27,8 +27,15 @@ export default {
       return badRequest('?type must be "blog" or "project"')
     }
     if (!slug) return badRequest('?slug is required')
+    if (!/^[a-zA-Z0-9_-]+$/.test(slug)) {
+      return badRequest('?slug must contain only letters, numbers, hyphens, and underscores')
+    }
     if (!title) return badRequest('?title is required')
+    if (title.length > 200) return badRequest('?title must be 200 characters or fewer')
     if (!description) return badRequest('?description is required')
+    if (description.length > 300) {
+      return badRequest('?description must be 300 characters or fewer')
+    }
 
     const cacheKey = `og/${type}-${slug}.png`
 
@@ -45,24 +52,29 @@ export default {
     }
 
     // Generate PNG
-    await ensureWasm()
-    const svg = await renderOgSvg({ title, description, type })
-    const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } })
-    const pngBuffer = resvg.render().asPng() as Uint8Array<ArrayBuffer>
+    try {
+      await ensureWasm()
+      const svg = await renderOgSvg({ title, description, type })
+      const resvg = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } })
+      const pngBuffer = resvg.render().asPng() as Uint8Array<ArrayBuffer>
 
-    // Write to R2 (fire-and-forget; don't block the response)
-    ctx.waitUntil(
-      env.MEDIA_BUCKET.put(cacheKey, pngBuffer, {
-        httpMetadata: { contentType: 'image/png' },
-      }).catch(console.error)
-    )
+      // Write to R2 (fire-and-forget; don't block the response)
+      ctx.waitUntil(
+        env.MEDIA_BUCKET.put(cacheKey, pngBuffer, {
+          httpMetadata: { contentType: 'image/png' },
+        }).catch(console.error)
+      )
 
-    return new Response(pngBuffer, {
-      headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=31536000, immutable',
-        'X-Cache': 'MISS',
-      },
-    })
+      return new Response(pngBuffer, {
+        headers: {
+          'Content-Type': 'image/png',
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'X-Cache': 'MISS',
+        },
+      })
+    } catch (err) {
+      console.error(err)
+      return new Response('Failed to generate image', { status: 500 })
+    }
   },
 } satisfies ExportedHandler<Env>
