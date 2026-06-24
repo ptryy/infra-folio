@@ -34,7 +34,10 @@ class MinioAdapter implements StorageAdapter {
   async get(key: string): Promise<ReadableStream | null> {
     try {
       const res = await this.client.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }))
-      return res.Body as ReadableStream
+      const body = res.Body as { transformToWebStream?: () => ReadableStream } & ReadableStream
+      return typeof body.transformToWebStream === 'function'
+        ? body.transformToWebStream()
+        : body
     } catch (e) {
       if ((e as { name?: string }).name === 'NoSuchKey') return null
       throw e
