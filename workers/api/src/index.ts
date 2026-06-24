@@ -7,7 +7,7 @@ const GITHUB_CACHE_TTL = 300 // 5 minutes
 
 type Env = {
   GITHUB_CACHE: KVNamespace
-  GITHUB_TOKEN: string
+  GITHUB_TOKEN?: string
 }
 
 const WORKER_START = Date.now()
@@ -46,7 +46,7 @@ export default {
 
     const url = new URL(request.url)
 
-    if (url.pathname === '/status') return handleStatus()
+    if (url.pathname === '/status') return handleStatus(request)
     if (url.pathname === '/github/feed') return handleGithubFeed(env)
     if (url.pathname === '/github/stats') return handleGithubStats(env)
 
@@ -54,10 +54,11 @@ export default {
   },
 } satisfies ExportedHandler<Env>
 
-async function handleStatus(): Promise<Response> {
+async function handleStatus(request: Request): Promise<Response> {
+  const region = (request.cf as { colo?: string } | undefined)?.colo ?? 'unknown'
   return json({
     status: 'ok',
-    region: (globalThis as unknown as { CF?: { colo?: string } }).CF?.colo ?? 'unknown',
+    region,
     uptimeMs: Date.now() - WORKER_START,
     timestamp: new Date().toISOString(),
   })
@@ -111,7 +112,6 @@ async function handleGithubStats(env: Env): Promise<Response> {
   const user = await userRes.json() as {
     public_repos: number
     followers: number
-    public_gists: number
   }
 
   // Fetch total stars by summing across repos (first page, up to 100 repos)
