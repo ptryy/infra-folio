@@ -34,10 +34,10 @@ tunnel:
 
 # ── Media ────────────────────────────────────────────────────────────────────────────
 media-upload:
-	mc cp --recursive $(PATH) $(MINIO_ALIAS)/infra-folio-media/
+	mc cp --recursive $(SRC) $(MINIO_ALIAS)/infra-folio-media/
 
 media-pull:
-	mc cp --recursive $(MINIO_ALIAS)/infra-folio-media/ $(PATH)
+	mc cp --recursive $(MINIO_ALIAS)/infra-folio-media/ $(SRC)
 
 og-gen:
 	@echo "Pre-warming OG images..."
