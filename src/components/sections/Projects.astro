@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content'
+
+const allProjects = await getCollection('projects')
+const featured = allProjects.filter(p => p.data.featured)
+---
+<section class="projects" id="projects">
+  <div class="container">
+    <h2>Featured Projects</h2>
+    <div class="projects__grid">
+      {featured.map(project => (
+        <article class="project-card">
+          {project.data.media[0] && (
+            <img
+              src={project.data.media[0]}
+              alt={project.data.title}
+              class="project-card__img"
+              loading="lazy"
+            />
+          )}
+          <div class="project-card__body">
+            <h3 class="project-card__title">{project.data.title}</h3>
+            <p class="project-card__desc">{project.data.description}</p>
+            <div class="project-card__tags">
+              {project.data.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+            <div class="project-card__links">
+              {project.data.repoUrl && (
+                <a href={project.data.repoUrl} target="_blank" rel="noopener">GitHub →</a>
+              )}
+              {project.data.demoUrl && (
+                <a href={project.data.demoUrl} target="_blank" rel="noopener">Demo →</a>
+              )}
+              <a href={`/projects/${project.slug}/`}>Details →</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    <div class="projects__more">
+      <a href="/projects/" class="btn btn--ghost">All projects</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.projects { background: var(--color-surface); }
+.projects__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+.project-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.project-card:hover { border-color: var(--color-accent); }
+.project-card__img { width: 100%; height: 200px; object-fit: cover; }
+.project-card__body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.project-card__title { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
+.project-card__desc { color: var(--color-muted); font-size: 0.9rem; line-height: 1.6; }
+.project-card__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.project-card__links { display: flex; gap: 1rem; flex-wrap: wrap; }
+.project-card__links a { color: var(--color-accent); font-size: 0.875rem; font-weight: 500; }
+.projects__more { margin-top: 2.5rem; text-align: center; }
+.btn--ghost {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn--ghost:hover { border-color: var(--color-accent); text-decoration: none; }
+</style>

@@ -1,0 +1,64 @@
+---
+export const prerender = false
+
+import { getEntry } from 'astro:content'
+import Layout from '../../components/layout/Layout.astro'
+
+const { slug } = Astro.params
+if (!slug) return Astro.redirect('/blog/')
+
+const post = await getEntry('blog', slug)
+if (!post) return new Response('Not found', { status: 404 })
+
+const { Content } = await post.render()
+
+const domain = import.meta.env.DOMAIN ?? Astro.url.hostname
+const ogUrl = `https://og.${domain}/og?type=blog&slug=${encodeURIComponent(slug)}&title=${encodeURIComponent(post.data.title)}&description=${encodeURIComponent(post.data.excerpt)}`
+---
+<Layout
+  title={`${post.data.title} — Phuc Truong`}
+  description={post.data.excerpt}
+  ogImage={ogUrl}
+>
+  <article style="max-width: 720px; margin: 0 auto; padding: var(--section-pad)">
+    <header style="margin-bottom: 2.5rem">
+      <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem">
+        {post.data.tags.map(tag => <span class="tag">{tag}</span>)}
+      </div>
+      <h1 style="margin-bottom: 0.75rem">{post.data.title}</h1>
+      <time style="color: var(--color-muted); font-size: 0.875rem">
+        {post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </time>
+    </header>
+    {post.data.coverImage && (
+      <img
+        src={post.data.coverImage}
+        alt={post.data.title}
+        style="width: 100%; border-radius: 12px; margin-bottom: 2.5rem"
+      />
+    )}
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Layout>
+
+<style>
+.tag {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+.prose { color: var(--color-muted); line-height: 1.8; }
+.prose h1, .prose h2, .prose h3 { color: var(--color-text); margin: 2rem 0 1rem; }
+.prose p { margin-bottom: 1.25rem; }
+.prose code { color: var(--color-accent); background: rgba(99,102,241,0.1); padding: 0.1em 0.4em; border-radius: 4px; font-family: var(--font-mono); font-size: 0.875em; }
+.prose pre { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 1.25rem; overflow-x: auto; margin: 1.5rem 0; }
+.prose pre code { background: none; padding: 0; }
+.prose a { color: var(--color-accent); }
+.prose ul, .prose ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.prose li { margin-bottom: 0.4rem; }
+</style>

@@ -1,14 +1,22 @@
 ---
+import Layout from '../components/layout/Layout.astro'
+import Hero from '../components/sections/Hero.astro'
+import About from '../components/sections/About.astro'
+import Skills from '../components/sections/Skills.astro'
+import Projects from '../components/sections/Projects.astro'
+import OpenSource from '../components/sections/OpenSource.astro'
+import BlogSection from '../components/sections/BlogSection.astro'
+import StatusPanel from '../components/sections/StatusPanel.astro'
+import Contact from '../components/sections/Contact.astro'
+import { flags } from '../lib/flags'
 ---
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>infra-folio — coming soon</title>
-  </head>
-  <body>
-    <h1>infra-folio</h1>
-    <p>Portfolio coming soon.</p>
-  </body>
-</html>
+<Layout title="Phuc Truong — DevOps Engineer" description="Portfolio of Phuc Truong, DevOps and infrastructure engineer.">
+  <Hero />
+  <About />
+  <Skills />
+  <Projects />
+  <OpenSource />
+  <BlogSection />
+  {flags.LIVE_TERMINAL && <StatusPanel />}
+  {flags.CONTACT_FORM && <Contact />}
+</Layout>
