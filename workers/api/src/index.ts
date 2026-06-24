@@ -5,6 +5,8 @@ type Env = {
   GITHUB_TOKEN: string
 }
 
+const WORKER_START = Date.now()
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
@@ -39,7 +41,12 @@ export default {
 } satisfies ExportedHandler<Env>
 
 async function handleStatus(): Promise<Response> {
-  return json({ status: 'ok' })
+  return json({
+    status: 'ok',
+    region: (globalThis as unknown as { CF?: { colo?: string } }).CF?.colo ?? 'unknown',
+    uptimeMs: Date.now() - WORKER_START,
+    timestamp: new Date().toISOString(),
+  })
 }
 
 async function handleGithubFeed(_env: Env): Promise<Response> {
