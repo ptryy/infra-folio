@@ -32,7 +32,14 @@ describe('MinIO integration', () => {
       if (done) break
       chunks.push(value)
     }
-    const text = new TextDecoder().decode(Buffer.concat(chunks))
+    const total = chunks.reduce((sum, c) => sum + c.length, 0)
+    const merged = new Uint8Array(total)
+    let offset = 0
+    for (const chunk of chunks) {
+      merged.set(chunk, offset)
+      offset += chunk.length
+    }
+    const text = new TextDecoder().decode(merged)
     expect(text).toBe(CONTENT)
   })
 
