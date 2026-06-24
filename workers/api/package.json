@@ -1,0 +1,9 @@
+{
+  "name": "infra-folio-api",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "wrangler": "^3.75.0"
+  }
+}
