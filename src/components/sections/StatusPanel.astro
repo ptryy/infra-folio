@@ -1,9 +1,29 @@
 ---
-// Full implementation in Plan 06 (Interactive Islands)
+import LiveTerminal from '../islands/LiveTerminal'
+import { flags } from '../../lib/flags'
+
+const apiBase = import.meta.env.API_BASE ?? 'http://localhost:8787'
 ---
 <section class="status-panel" id="status">
   <div class="container">
     <h2>Infrastructure Status</h2>
-    <p style="color: var(--color-muted)">Live terminal requires LIVE_TERMINAL=true and the interactive island.</p>
+    <LiveTerminal enabled={flags.LIVE_TERMINAL} apiBase={apiBase} client:visible />
+    {!flags.LIVE_TERMINAL && (
+      <p style="color: var(--color-muted); font-size: 0.875rem">
+        Live terminal disabled. Set <code>LIVE_TERMINAL=true</code> and redeploy to enable.
+      </p>
+    )}
   </div>
 </section>
+
+<style>
+.status-panel { background: var(--color-surface); }
+.status-panel code {
+  color: var(--color-accent);
+  background: rgba(99,102,241,0.1);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+</style>
