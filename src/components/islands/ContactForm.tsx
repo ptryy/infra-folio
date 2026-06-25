@@ -22,12 +22,13 @@ function validate(form: FormState): FormErrors {
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
-  padding: '0.75rem',
-  background: 'var(--color-surface)',
-  border: '1px solid var(--color-border)',
-  borderRadius: '8px',
-  color: 'var(--color-text)',
-  fontSize: '0.95rem',
+  padding: '0.7rem 0.8rem',
+  background: '#0a0d14',
+  border: '1px solid rgba(34,227,255,0.35)',
+  borderRadius: '3px',
+  color: '#cfe8f0',
+  fontSize: '0.9rem',
+  fontFamily: "var(--font-mono, monospace)",
   outline: 'none',
 }
 
@@ -149,11 +150,9 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
+        className="btn btn--primary"
         style={{
           padding: '0.75rem 2rem',
-          background: submitting ? 'var(--color-border)' : 'var(--color-accent)',
-          color: '#fff',
-          border: 'none',
           borderRadius: '8px',
           fontWeight: 600,
           fontSize: '0.95rem',
