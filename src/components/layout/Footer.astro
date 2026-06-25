@@ -3,7 +3,7 @@ const year = new Date().getFullYear()
 ---
 <footer class="footer">
   <div class="container footer__inner">
-    <span class="footer__copy">&copy; {year} Phuc Truong. All rights reserved.</span>
+    <span class="footer__copy">$ built on the cloudflare edge &middot; &copy; {year} Phuc Truong</span>
     <nav class="footer__links">
       <a href="https://github.com/phuctruong" target="_blank" rel="noopener">GitHub</a>
       <a href="https://linkedin.com/in/phuctruong" target="_blank" rel="noopener">LinkedIn</a>
@@ -12,19 +12,10 @@ const year = new Date().getFullYear()
 </footer>
 
 <style>
-.footer {
-  border-top: 1px solid var(--color-border);
-  padding: 2rem 0;
-}
-.footer__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.footer__copy { color: var(--color-muted); font-size: 0.875rem; }
+.footer { border-top: 1px solid rgba(34,227,255,0.15); padding: 2.5rem 0; position: relative; z-index: 2; }
+.footer__inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer__copy { color: var(--color-muted); font-size: 0.8rem; font-family: var(--font-mono); }
 .footer__links { display: flex; gap: 1.5rem; }
-.footer__links a { color: var(--color-muted); font-size: 0.875rem; }
-.footer__links a:hover { color: var(--color-text); text-decoration: none; }
+.footer__links a { color: var(--color-muted); font-size: 0.8rem; }
+.footer__links a:hover { color: var(--color-accent); text-decoration: none; text-shadow: var(--glow-cyan); }
 </style>
