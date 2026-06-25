@@ -41,7 +41,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 const errorStyle: React.CSSProperties = {
-  color: '#ef4444',
+  color: '#ff7a18',
   fontSize: '0.8rem',
   marginTop: '0.25rem',
 }
@@ -89,8 +89,8 @@ export default function ContactForm() {
 
   if (success) {
     return (
-      <div style={{ padding: '2rem', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '12px', textAlign: 'center' }}>
-        <p style={{ color: '#10b981', fontWeight: 600, fontSize: '1.1rem' }}>Message sent!</p>
+      <div style={{ padding: '2rem', background: 'rgba(57,255,138,0.1)', border: '1px solid rgba(57,255,138,0.3)', borderRadius: '3px', textAlign: 'center' }}>
+        <p style={{ color: '#39ff8a', fontWeight: 600, fontSize: '1.1rem' }}>Message sent!</p>
         <p style={{ color: 'var(--color-muted)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
           Thanks for reaching out. I'll get back to you within 24–48 hours.
         </p>
@@ -153,12 +153,8 @@ export default function ContactForm() {
         className="btn btn--primary"
         style={{
           padding: '0.75rem 2rem',
-          borderRadius: '8px',
-          fontWeight: 600,
-          fontSize: '0.95rem',
           cursor: submitting ? 'not-allowed' : 'pointer',
           alignSelf: 'flex-start',
-          transition: 'background 0.2s',
         }}
       >
         {submitting ? 'Sending…' : 'Send message'}
