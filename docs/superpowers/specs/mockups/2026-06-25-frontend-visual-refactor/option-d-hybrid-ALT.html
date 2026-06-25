@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Option D — Hybrid (Glass readability + CRT terminal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --text:#1d2333; --dim:#5b647e;
+    --purple:#8b5cf6; --blue:#3b82f6; --pink:#ec4899;
+    --glass:rgba(255,255,255,.55); --glass-brd:rgba(255,255,255,.75);
+    /* terminal palette borrowed from A */
+    --t-green:#39ff8a; --t-cyan:#22e3ff; --t-orange:#ff7a18;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif; color:var(--text); line-height:1.6; position:relative; overflow-x:hidden; background:#eef1fb}
+  .mono{font-family:'Fira Code',monospace}
+  /* C's mesh gradient + halos */
+  .mesh{position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(40% 40% at 15% 20%,rgba(139,92,246,.42),transparent 70%),
+      radial-gradient(45% 45% at 85% 15%,rgba(236,72,153,.38),transparent 70%),
+      radial-gradient(50% 50% at 75% 80%,rgba(59,130,246,.42),transparent 70%),
+      radial-gradient(40% 40% at 20% 90%,rgba(250,204,21,.32),transparent 70%);
+    filter:blur(10px)}
+  .wrap{position:relative; z-index:2}
+  .container{max-width:1060px; margin:0 auto; padding:0 1.5rem}
+  a{color:var(--blue); text-decoration:none}
+  h1,h2,h3{font-weight:800; letter-spacing:-.02em; color:var(--text)}
+
+  .glass{background:var(--glass); backdrop-filter:blur(18px) saturate(160%); -webkit-backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid var(--glass-brd); border-radius:22px; box-shadow:0 10px 40px rgba(80,90,160,.18),inset 0 1px 0 rgba(255,255,255,.7)}
+
+  nav.top{position:sticky; top:14px; z-index:30; margin:14px auto 0; max-width:1060px; width:calc(100% - 3rem);
+    display:flex; align-items:center; gap:1rem; padding:.6rem 1.1rem;
+    background:rgba(255,255,255,.5); backdrop-filter:blur(18px); border:1px solid var(--glass-brd); border-radius:18px;
+    box-shadow:0 8px 30px rgba(80,90,160,.16)}
+  .brand{font-weight:800; letter-spacing:-.02em; font-size:1.05rem; display:flex; align-items:center; gap:.5rem}
+  .brand .gt{font-family:'Fira Code',monospace; color:var(--purple)}
+  .brand span{background:linear-gradient(90deg,var(--purple),var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .pagenav{display:flex; gap:.25rem; margin-left:auto; flex-wrap:wrap}
+  .pagenav button{font-family:inherit; font-size:.78rem; font-weight:600; cursor:pointer; color:var(--dim);
+    background:transparent; border:none; padding:.45rem .8rem; border-radius:12px; transition:.18s}
+  .pagenav button:hover{background:rgba(255,255,255,.6); color:var(--text)}
+  .pagenav button.active{background:linear-gradient(90deg,var(--purple),var(--blue)); color:#fff; box-shadow:0 6px 18px rgba(99,102,241,.4)}
+
+  .page{display:none}.page.show{display:block; animation:rise .4s ease}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  section{padding:3.2rem 0}
+  .label{font-family:'Fira Code',monospace; font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:lowercase;
+    background:linear-gradient(90deg,var(--purple),var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .label::before{content:'// '}
+
+  .hero{padding:4.5rem 0 3rem; text-align:center}
+  .badge{display:inline-flex; gap:.5rem; align-items:center; font-size:.78rem; font-weight:600; color:#16a34a;
+    background:rgba(255,255,255,.6); border:1px solid var(--glass-brd); padding:.4rem .9rem; border-radius:9999px; box-shadow:0 4px 14px rgba(80,90,160,.12)}
+  .badge::before{content:'●'; font-size:.55rem; animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.3}}
+  .hero h1{font-size:clamp(2.8rem,8vw,5rem); margin:1.4rem 0 .4rem; line-height:1.05;
+    background:linear-gradient(120deg,#1d2333,#6d28d9 60%,#db2777); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .hero .sub{font-family:'Fira Code',monospace; font-size:clamp(1rem,3vw,1.35rem); color:var(--purple); font-weight:500; margin-bottom:1rem}
+  .hero .sub::before{content:'> '; color:var(--pink)}
+  .hero .val{color:var(--dim); max-width:540px; margin:0 auto 2rem}
+  .btn{font-family:inherit; font-weight:600; font-size:.9rem; cursor:pointer; padding:.8rem 1.7rem; border-radius:14px; transition:.18s; display:inline-block; border:1px solid transparent}
+  .btn-p{background:linear-gradient(120deg,var(--purple),var(--blue)); color:#fff; box-shadow:0 10px 26px rgba(99,102,241,.45)}
+  .btn-p:hover{transform:translateY(-2px); box-shadow:0 14px 32px rgba(99,102,241,.55)}
+  .btn-g{background:rgba(255,255,255,.55); border:1px solid var(--glass-brd); color:var(--text); backdrop-filter:blur(10px)}
+  .btn-g:hover{transform:translateY(-2px)}
+
+  .about .glass{padding:2rem; max-width:760px}
+  .about p{color:var(--dim); margin-bottom:1rem}
+  .grid-skills{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.1rem; margin-top:1.4rem}
+  .skill-cell{padding:1.3rem}
+  .skill-cell h3{font-family:'Fira Code',monospace; font-size:.74rem; letter-spacing:.06em; text-transform:lowercase; color:var(--purple); margin-bottom:.9rem}
+  .tags{display:flex; flex-wrap:wrap; gap:.45rem}
+  .tag{font-family:'Fira Code',monospace; font-size:.74rem; padding:.3rem .7rem; border-radius:9999px; color:var(--text);
+    background:rgba(255,255,255,.6); border:1px solid var(--glass-brd)}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:1.2rem; margin-top:1.5rem}
+  .tile{padding:1.4rem; transition:.2s}
+  .tile:hover{transform:translateY(-4px); box-shadow:0 18px 50px rgba(80,90,160,.28)}
+  .tile-ico{width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:.9rem;
+    background:linear-gradient(135deg,rgba(139,92,246,.85),rgba(59,130,246,.85)); box-shadow:0 8px 20px rgba(99,102,241,.4)}
+  .tile-ico.pink{background:linear-gradient(135deg,rgba(236,72,153,.85),rgba(250,204,21,.85)); box-shadow:0 8px 20px rgba(236,72,153,.4)}
+  .tile-ico svg{width:24px; height:24px; color:#fff}
+  .tile h3{font-size:1.1rem; margin-bottom:.5rem}
+  .tile p{font-size:.86rem; color:var(--dim); margin-bottom:1rem}
+  .stack{display:flex; gap:.45rem; flex-wrap:wrap}
+  .chip{font-family:'Fira Code',monospace; font-size:.72rem; padding:.22rem .6rem; border-radius:9999px; color:var(--purple); background:rgba(139,92,246,.12); border:1px solid rgba(139,92,246,.25)}
+
+  /* ===== HYBRID LIVE TERMINAL: C glass island shell + A CRT screen ===== */
+  .term-shell{position:relative; margin-top:1.6rem; padding:10px}
+  .term-shell::before{content:''; position:absolute; inset:14px 26px; z-index:0; border-radius:30px;
+    background:radial-gradient(ellipse at 50% 60%,rgba(139,92,246,.9),rgba(34,227,255,.4),transparent 72%); filter:blur(38px)}
+  /* glass frame */
+  .term-frame{position:relative; z-index:1; padding:10px; border-radius:24px;
+    background:rgba(255,255,255,.4); backdrop-filter:blur(16px); border:1px solid var(--glass-brd);
+    box-shadow:0 22px 64px rgba(80,50,160,.32),inset 0 1px 0 rgba(255,255,255,.7)}
+  /* A's CRT screen inside the glass frame */
+  .crt{position:relative; border-radius:16px; overflow:hidden; background:#02070a;
+    border:1px solid rgba(57,255,138,.35); box-shadow:inset 0 0 70px rgba(57,255,138,.10),0 0 30px rgba(57,255,138,.18)}
+  .crt::after{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
+    background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.32) 2px 4px); mix-blend-mode:multiply}
+  .crt::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
+    background:radial-gradient(ellipse 100% 75% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 100%)}
+  #crtRain{position:absolute; inset:0; z-index:0; opacity:.16; pointer-events:none}
+  .crt-bar{position:relative; z-index:2; display:flex; align-items:center; gap:.5rem; padding:.55rem .9rem;
+    background:#04130c; border-bottom:1px solid rgba(57,255,138,.4); font-family:'Fira Code',monospace; font-size:.74rem; color:var(--t-green)}
+  .dot{width:9px; height:9px; border-radius:50%}
+  .logs{position:relative; z-index:2; font-family:'Fira Code',monospace; font-size:.78rem; padding:1rem 1.1rem; height:226px; overflow:hidden}
+  .logline{white-space:nowrap; text-shadow:0 0 6px rgba(57,255,138,.55)}
+  .logline .ts{color:#2e7d52}
+  .logline .ok{color:var(--t-green)} .logline .warn{color:var(--t-orange)} .logline .info{color:var(--t-cyan)}
+  .status-row{position:relative; z-index:2; display:flex; gap:1.4rem; flex-wrap:wrap; padding:.7rem 1.1rem;
+    border-top:1px solid rgba(57,255,138,.25); font-family:'Fira Code',monospace; font-size:.74rem; color:var(--t-cyan)}
+  .status-row b{color:var(--t-green)}
+
+  .list-item{padding:1.3rem 1.5rem; margin-bottom:1.1rem; transition:.2s}
+  .list-item:hover{transform:translateY(-3px); box-shadow:0 16px 44px rgba(80,90,160,.24)}
+  .meta{font-family:'Fira Code',monospace; font-size:.74rem; color:var(--purple)}
+  .list-item h3{font-size:1.25rem; margin:.4rem 0}
+  .list-item p{color:var(--dim); font-size:.9rem}
+  .post-body{max-width:720px; margin:0 auto}
+  .post-body .glass{padding:2.2rem}
+  .post-body p{color:var(--dim); margin:1rem 0}
+  .post-body h1{font-size:clamp(2rem,5vw,3rem); margin:.5rem 0 1rem;
+    background:linear-gradient(120deg,#1d2333,#6d28d9); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .post-body h2{font-size:1.3rem; color:var(--purple); margin:1.6rem 0 .6rem}
+  /* code blocks echo the CRT terminal so the dev language is consistent */
+  .post-body pre{font-family:'Fira Code',monospace; background:#02070a; color:var(--t-green);
+    padding:1rem 1.2rem; border-radius:14px; overflow:auto; font-size:.8rem; border:1px solid rgba(57,255,138,.3);
+    box-shadow:inset 0 0 40px rgba(57,255,138,.08); text-shadow:0 0 6px rgba(57,255,138,.4)}
+  .comments{margin-top:2.5rem; padding:1.6rem}
+  .gisc-line{display:flex; gap:.8rem; margin:1rem 0}
+  .gisc-av{width:38px; height:38px; border-radius:50%; flex:none; background:linear-gradient(135deg,var(--purple),var(--pink)); box-shadow:0 6px 16px rgba(139,92,246,.4)}
+  .feat{font-family:'Fira Code',monospace; font-size:.64rem; color:#fff; background:linear-gradient(120deg,var(--purple),var(--pink)); padding:.12rem .5rem; border-radius:9999px; margin-left:auto}
+  .gallery{display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; margin:1.2rem 0}
+  .shot{height:150px; border-radius:16px; background:linear-gradient(135deg,rgba(139,92,246,.4),rgba(236,72,153,.35),rgba(59,130,246,.4));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:.78rem; font-weight:600; box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+  footer{padding:2.5rem 0; text-align:center; color:var(--dim); font-family:'Fira Code',monospace; font-size:.78rem}
+  .ipt{font-family:inherit; background:rgba(255,255,255,.6); border:1px solid var(--glass-brd); padding:.8rem 1rem; border-radius:14px; font-size:.9rem; backdrop-filter:blur(10px)}
+  .ipt:focus{outline:none; border-color:var(--purple); box-shadow:0 0 0 4px rgba(139,92,246,.18)}
+</style>
+</head>
+<body>
+<div class="mesh"></div>
+<div class="wrap">
+  <nav class="top">
+    <span class="brand"><span class="gt">~/</span><span>phuc.truong</span></span>
+    <div class="pagenav">
+      <button class="active" onclick="go('home',this)">Home</button>
+      <button onclick="go('blog',this)">Blog</button>
+      <button onclick="go('post',this)">Post</button>
+      <button onclick="go('projects',this)">Projects</button>
+      <button onclick="go('project',this)">Detail</button>
+    </div>
+  </nav>
+
+  <!-- HOME -->
+  <div id="home" class="page show">
+    <div class="container hero">
+      <span class="badge">Available for freelance work</span>
+      <h1>Phuc Truong</h1>
+      <p class="sub mono">DevOps &amp; Infrastructure Engineer</p>
+      <p class="val">I build reliable, scalable infrastructure so your team can ship faster and sleep better.</p>
+      <div style="display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap"><a class="btn btn-p">Hire me</a><a class="btn btn-g">View work</a></div>
+    </div>
+
+    <section class="container about"><p class="label">about</p><h2 style="font-size:2rem; margin:.4rem 0 1.2rem">About me</h2>
+      <div class="glass">
+        <p>I'm a DevOps and infrastructure engineer with a passion for building systems that are observable, reproducible, and boring in the best possible way.</p>
+        <p style="margin-bottom:0">My background spans cloud infrastructure (AWS, GCP, Cloudflare), container orchestration (Kubernetes, Docker), and platform engineering — with a strong preference for infrastructure-as-code and GitOps workflows.</p>
+      </div>
+    </section>
+
+    <section class="container"><p class="label">skills</p><h2 style="font-size:2rem; margin:.4rem 0">Skills &amp; Stack</h2>
+      <div class="grid-skills">
+        <div class="glass skill-cell"><h3>languages</h3><div class="tags"><span class="tag">TypeScript</span><span class="tag">Python</span><span class="tag">Go</span><span class="tag">Bash</span><span class="tag">HCL</span></div></div>
+        <div class="glass skill-cell"><h3>infrastructure</h3><div class="tags"><span class="tag">Terraform</span><span class="tag">Ansible</span><span class="tag">Docker</span><span class="tag">Kubernetes</span></div></div>
+        <div class="glass skill-cell"><h3>cloud</h3><div class="tags"><span class="tag">AWS</span><span class="tag">GCP</span><span class="tag">Cloudflare</span><span class="tag">R2</span></div></div>
+        <div class="glass skill-cell"><h3>ci/cd &amp; ops</h3><div class="tags"><span class="tag">GitHub Actions</span><span class="tag">ArgoCD</span><span class="tag">Grafana</span></div></div>
+      </div>
+    </section>
+
+    <section class="container"><p class="label">projects</p><h2 style="font-size:2rem; margin:.4rem 0">Featured Projects</h2>
+      <div class="cards">
+        <div class="glass tile"><div class="tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Edge Deploy Pipeline</h3><p>Zero-downtime GitOps pipeline for 40+ Cloudflare Workers with automated rollback.</p><div class="stack"><span class="chip">Astro</span><span class="chip">Terraform</span><span class="chip">ArgoCD</span></div></div>
+        <div class="glass tile"><div class="tile-ico pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></div><h3>k8s Observability Stack</h3><p>Prometheus + Grafana + Loki bootstrap chart deployed across 3 clusters.</p><div class="stack"><span class="chip">Kubernetes</span><span class="chip">Helm</span><span class="chip">Grafana</span></div></div>
+      </div>
+    </section>
+
+    <section class="container"><p class="label">open source</p><h2 style="font-size:2rem; margin:.4rem 0">Open Source</h2>
+      <div class="cards">
+        <div class="glass tile"><h3>★ 1.2k · infra-folio</h3><p style="margin-top:.5rem">This portfolio — Astro on the Cloudflare edge, 3 workers.</p><div class="stack"><span class="chip">TypeScript</span></div></div>
+        <div class="glass tile"><h3>★ 480 · tf-edge-modules</h3><p style="margin-top:.5rem">Reusable Terraform modules for Cloudflare.</p><div class="stack"><span class="chip">HCL</span></div></div>
+      </div>
+    </section>
+
+    <section class="container"><p class="label">status panel</p><h2 style="font-size:2rem; margin:.4rem 0">Live Infrastructure</h2>
+      <div class="term-shell"><div class="term-frame"><div class="crt">
+        <canvas id="crtRain"></canvas>
+        <div class="crt-bar"><span class="dot" style="background:var(--t-green)"></span> infra-folio@edge — live tail <span style="margin-left:auto; color:var(--t-cyan)">● connected</span></div>
+        <div class="logs" id="logbox"></div>
+        <div class="status-row"><span>region: <b>SIN</b></span><span>uptime: <b>99.99%</b></span><span>workers: <b>3/3 up</b></span><span>p50: <b>11ms</b></span></div>
+      </div></div></div>
+    </section>
+
+    <section class="container"><p class="label">contact</p><h2 style="font-size:2rem; margin:.4rem 0 1.2rem">Get in touch</h2>
+      <div class="glass" style="padding:1.8rem; max-width:500px"><div style="display:flex; flex-direction:column; gap:.8rem">
+        <input class="ipt" placeholder="Your name"><input class="ipt" placeholder="Your email"><textarea class="ipt" rows="3" placeholder="Your message"></textarea>
+        <a class="btn btn-p" style="text-align:center">Send message</a>
+      </div></div>
+    </section>
+    <footer>$ built on the cloudflare edge · © 2026 Phuc Truong</footer>
+  </div>
+
+  <!-- BLOG LIST -->
+  <div id="blog" class="page">
+    <section class="container"><p class="label">blog</p><h2 style="font-size:2.2rem; margin:.4rem 0 1.5rem">Writing</h2>
+      <div class="glass list-item"><div class="meta">2026-06-20 · devops, cloudflare</div><h3>Running Astro hybrid on Workers</h3><p>How I split one site into three independently deployable workers.</p></div>
+      <div class="glass list-item"><div class="meta">2026-05-11 · observability</div><h3>Cheap edge observability with KV</h3><p>A 5-minute TTL cache that survived a traffic spike.</p></div>
+      <div class="glass list-item"><div class="meta">2026-04-02 · terraform</div><h3>Terraform modules for Cloudflare</h3><p>Reusable HCL that keeps 40 workers in sync.</p></div>
+    </section>
+  </div>
+
+  <!-- BLOG POST -->
+  <div id="post" class="page">
+    <section class="container"><div class="post-body">
+      <div class="glass">
+        <div class="meta">2026-06-20 · devops, cloudflare</div>
+        <h1>Running Astro hybrid on Workers</h1>
+        <p>Most portfolios ship as a single static bundle. This one runs as three independently deployable Cloudflare Workers, and the win was bigger than I expected.</p>
+        <h2>The split</h2>
+        <p>The site worker renders Astro in hybrid mode. Static pages prerender; dynamic routes server-render at the edge.</p>
+        <pre>$ wrangler deploy --name infra-folio
+[✓] uploaded site-worker (1.2 MiB)
+[✓] published https://phuctruong.dev</pre>
+        <p>Each worker has its own wrangler.toml and deploys on its own cadence.</p>
+      </div>
+      <div class="glass comments"><strong style="color:var(--purple)">Comments · Giscus</strong>
+        <div class="gisc-line"><div class="gisc-av"></div><div><b>@devops_dan</b><p style="color:var(--dim); font-size:.88rem">The X-Cache HIT trick is gold. Stealing this.</p></div></div>
+        <div class="gisc-line"><div class="gisc-av"></div><div><b>@k8s_kate</b><p style="color:var(--dim); font-size:.88rem">How are you handling cold starts on the og-worker?</p></div></div>
+      </div>
+    </div></section>
+  </div>
+
+  <!-- PROJECTS LIST -->
+  <div id="projects" class="page">
+    <section class="container"><p class="label">projects</p><h2 style="font-size:2.2rem; margin:.4rem 0 1.5rem">All Projects</h2>
+      <div class="cards">
+        <div class="glass tile"><div style="display:flex; align-items:center"><div class="tile-ico" style="margin-bottom:0; width:38px; height:38px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><span class="feat">featured</span></div><h3 style="margin-top:.8rem">Edge Deploy Pipeline</h3><p>Zero-downtime GitOps for 40+ workers.</p><div class="stack"><span class="chip">Astro</span><span class="chip">Terraform</span></div></div>
+        <div class="glass tile"><h3>k8s Observability Stack</h3><p style="margin-top:.5rem">Prometheus + Grafana + Loki bootstrap.</p><div class="stack"><span class="chip">Kubernetes</span><span class="chip">Helm</span></div></div>
+        <div class="glass tile"><h3>tf-edge-modules</h3><p style="margin-top:.5rem">Reusable Terraform for Cloudflare.</p><div class="stack"><span class="chip">HCL</span></div></div>
+        <div class="glass tile"><h3>Runbook Bot</h3><p style="margin-top:.5rem">Slack incident automation.</p><div class="stack"><span class="chip">Go</span><span class="chip">Python</span></div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PROJECT DETAIL -->
+  <div id="project" class="page">
+    <section class="container"><div class="post-body"><div class="glass">
+      <div class="meta">featured project</div>
+      <h1>Edge Deploy Pipeline</h1>
+      <p>Zero-downtime GitOps pipeline for 40+ Cloudflare Workers with automated rollback and health gating.</p>
+      <div class="stack" style="margin:1.2rem 0"><span class="chip">Astro</span><span class="chip">Terraform</span><span class="chip">ArgoCD</span><span class="chip">GitHub Actions</span></div>
+      <div style="display:flex; gap:.8rem; margin-bottom:1.2rem"><a class="btn btn-p">Live demo →</a><a class="btn btn-g">Repo →</a></div>
+      <div class="gallery"><div class="shot">screenshot_01.png</div><div class="shot">dashboard.png</div></div>
+      <h2>Overview</h2>
+      <p>The pipeline watches a monorepo, plans changes per worker, and promotes through staging with automatic rollback if health checks fail.</p>
+      <pre>[✓] plan: 3 workers changed
+[✓] staging: deploy -> success
+[!] prod: health gate -> 200 OK
+[✓] prod: promote -> success</pre>
+    </div></div></section>
+  </div>
+
+  <footer>OPTION D · HYBRID — glass readability + CRT live terminal · click the nav to walk every page</footer>
+</div>
+
+<script>
+  function go(id,btn){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+    document.getElementById(id).classList.add('show');
+    document.querySelectorAll('.pagenav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'});
+  }
+  // matrix rain confined to the CRT terminal
+  const c=document.getElementById('crtRain'),x=c.getContext('2d');
+  function size(){const r=c.parentElement.getBoundingClientRect(); c.width=r.width; c.height=r.height}
+  size(); addEventListener('resize',size);
+  const chars='01<>/[]{}=+*$#'.split('');
+  let drops=[];
+  function seed(){const cols=Math.max(1,Math.floor(c.width/14)); drops=Array(cols).fill(1)}
+  seed(); addEventListener('resize',seed);
+  setInterval(()=>{
+    x.fillStyle='rgba(2,7,10,.10)'; x.fillRect(0,0,c.width,c.height);
+    x.fillStyle='#39ff8a'; x.font='12px Fira Code, monospace';
+    drops.forEach((d,i)=>{x.fillText(chars[Math.floor(Math.random()*chars.length)],i*14,d*14);
+      if(d*14>c.height&&Math.random()>.97)drops[i]=0; drops[i]++});
+  },75);
+  // scrolling logs (A-style)
+  const samples=[
+    ['ok','[✓] site-worker: deploy -> success'],
+    ['warn','[!] og-worker: cache miss -> regenerating...'],
+    ['info','[i] api-worker: GET /github/feed 200 (kv hit)'],
+    ['ok','[✓] og-worker: cached og/blog-astro.png -> R2'],
+    ['info','[i] edge: region=SIN colo=SIN cf-ray=8f2a'],
+    ['warn','[!] api-worker: github rate-limit 4901/5000'],
+    ['ok','[✓] health: 3/3 workers responding p50=11ms'],
+    ['info','[i] site-worker: GET /blog/astro-hybrid 200 ssr'],
+  ];
+  const box=document.getElementById('logbox'); let i=0;
+  setInterval(()=>{
+    const [cls,txt]=samples[i%samples.length]; i++;
+    const d=document.createElement('div'); d.className='logline';
+    const ts=new Date().toLocaleTimeString('en-GB');
+    d.innerHTML='<span class="ts">'+ts+'</span> <span class="'+cls+'">'+txt+'</span>';
+    box.appendChild(d); while(box.children.length>11)box.removeChild(box.firstChild);
+  },900);
+</script>
+</body>
+</html>
