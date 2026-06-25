@@ -6,7 +6,8 @@ const apiBase = import.meta.env.API_BASE ?? 'http://localhost:8787'
 ---
 <section class="status-panel" id="status">
   <div class="container">
-    <h2>Infrastructure Status</h2>
+    <p class="label">status panel</p>
+    <h2 class="glow-m">Live Infrastructure</h2>
     <LiveTerminal enabled={flags.LIVE_TERMINAL} apiBase={apiBase} client:visible />
     {!flags.LIVE_TERMINAL && (
       <p style="color: var(--color-muted); font-size: 0.875rem">
@@ -17,7 +18,7 @@ const apiBase = import.meta.env.API_BASE ?? 'http://localhost:8787'
 </section>
 
 <style>
-.status-panel { background: var(--color-surface); }
+.status-panel { background: transparent; }
 .status-panel code {
   color: var(--color-accent);
   background: rgba(99,102,241,0.1);
