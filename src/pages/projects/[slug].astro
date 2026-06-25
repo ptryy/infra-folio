@@ -22,7 +22,7 @@ const ogUrl = `https://og.${domain}/og?type=project&slug=${encodeURIComponent(sl
 >
   <article style="max-width: 800px; margin: 0 auto; padding: var(--section-pad)">
     <header style="margin-bottom: 2rem">
-      <h1 style="margin-bottom: 1rem">{project.data.title}</h1>
+      <h1 class="glow" style="margin-bottom: 1rem">{project.data.title}</h1>
       <p style="color: var(--color-muted); font-size: 1.1rem; margin-bottom: 1.5rem">{project.data.description}</p>
       <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.5rem">
         {project.data.tags.map(tag => <span class="tag">{tag}</span>)}
@@ -50,17 +50,11 @@ const ogUrl = `https://og.${domain}/og?type=project&slug=${encodeURIComponent(sl
 </Layout>
 
 <style>
-.tag {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-muted);
-  font-size: 0.8rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-}
 .prose { color: var(--color-muted); line-height: 1.8; }
 .prose h1, .prose h2, .prose h3 { color: var(--color-text); margin: 2rem 0 1rem; }
 .prose p { margin-bottom: 1.25rem; }
-.prose code { color: var(--color-accent); background: rgba(99,102,241,0.1); padding: 0.1em 0.4em; border-radius: 4px; font-family: var(--font-mono); font-size: 0.875em; }
+.prose code { color: var(--color-accent-2); background: rgba(57,255,138,0.08); padding: 0.1em 0.4em; border-radius: 3px; font-family: var(--font-mono); font-size: 0.875em; }
+.prose pre { background: #02070a; border: 1px solid rgba(57,255,138,0.3); border-radius: 6px; padding: 1.1rem; overflow-x: auto; margin: 1.5rem 0; box-shadow: inset 0 0 40px rgba(57,255,138,0.08); }
+.prose pre code { background: none; padding: 0; color: var(--color-accent-2); text-shadow: var(--glow-green); }
 .prose a { color: var(--color-accent); }
 </style>
