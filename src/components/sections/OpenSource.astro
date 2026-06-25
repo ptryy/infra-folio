@@ -2,7 +2,8 @@
 ---
 <section class="oss" id="open-source">
   <div class="container">
-    <h2>Open Source</h2>
+    <p class="label">open source</p>
+    <h2 class="glow">Open Source</h2>
     <p class="oss__intro">
       I contribute to open source projects in the DevOps and infrastructure space.
       Here's a snapshot of my public activity.
@@ -28,12 +29,12 @@
 </section>
 
 <style>
-.oss { background: var(--color-surface); }
+.oss { background: transparent; }
 .oss__intro { color: var(--color-muted); max-width: 600px; margin-bottom: 2.5rem; line-height: 1.7; }
 .oss__stats { display: flex; gap: 3rem; flex-wrap: wrap; margin-bottom: 2rem; }
 .stat { display: flex; flex-direction: column; gap: 0.25rem; }
-.stat__value { font-size: 2.5rem; font-weight: 800; color: var(--color-accent); }
+.stat__value { font-size: 2.5rem; font-weight: 800; color: var(--color-accent-2); text-shadow: var(--glow-green); }
 .stat__label { font-size: 0.85rem; color: var(--color-muted); }
-.oss__note { color: var(--color-muted); font-size: 0.875rem; }
-.oss__note code { color: var(--color-accent); background: rgba(99,102,241,0.1); padding: 0.1em 0.4em; border-radius: 4px; }
+.oss__note { color: var(--color-muted); font-size: 0.8rem; }
+.oss__note code { color: var(--color-accent); background: rgba(34,227,255,0.1); padding: 0.1em 0.4em; border-radius: 4px; font-family: var(--font-mono); }
 </style>
