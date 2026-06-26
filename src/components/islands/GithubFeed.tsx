@@ -57,29 +57,29 @@ export default function GithubFeed({ apiBase }: Props) {
   }, [fetchEvents])
 
   if (error) {
-    return <p style={{ color: '#ef4444', fontSize: '0.875rem' }}>{error}</p>
+    return <p style={{ color: '#ff7a18', fontSize: '0.875rem' }}>{error}</p>
   }
 
   if (!events) {
-    return <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>Loading GitHub activity…</p>
+    return <p style={{ color: '#6f8694', fontSize: '0.875rem' }}>Loading GitHub activity…</p>
   }
 
   return (
     <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       {events.slice(0, 8).map(event => (
         <li key={event.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', fontSize: '0.875rem' }}>
-          <span style={{ color: '#6366f1', fontFamily: 'monospace', flexShrink: 0 }}>›</span>
+          <span style={{ color: '#39ff8a', fontFamily: 'monospace', flexShrink: 0 }}>›</span>
           <span>
-            <span style={{ color: '#94a3b8' }}>{formatEventType(event.type)} </span>
+            <span style={{ color: '#6f8694' }}>{formatEventType(event.type)} </span>
             <a
               href={`https://github.com/${event.repo.name}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#f1f5f9', fontWeight: 500 }}
+              style={{ color: '#22e3ff', fontWeight: 500 }}
             >
               {event.repo.name.split('/')[1]}
             </a>
-            <span style={{ color: '#475569', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
+            <span style={{ color: '#5a6b7a', marginLeft: '0.5rem', fontSize: '0.8rem' }}>
               {timeAgo(event.created_at)}
             </span>
           </span>

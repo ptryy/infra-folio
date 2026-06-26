@@ -6,10 +6,15 @@ const featured = allProjects.filter(p => p.data.featured)
 ---
 <section class="projects" id="projects">
   <div class="container">
-    <h2>Featured Projects</h2>
+    <p class="label">projects</p>
+    <h2 class="glow">Featured Projects</h2>
     <div class="projects__grid">
       {featured.map(project => (
         <article class="project-card">
+          <div class="project-card__bar">
+            <span class="tl-dot tl-r"></span><span class="tl-dot tl-y"></span><span class="tl-dot tl-g"></span>
+            <span class="project-card__path">~/{project.slug}</span>
+          </div>
           {project.data.media[0] && (
             <img
               src={project.data.media[0]}
@@ -44,34 +49,32 @@ const featured = allProjects.filter(p => p.data.featured)
 </section>
 
 <style>
-.projects { background: var(--color-surface); }
+.projects { background: transparent; }
 .projects__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
 .project-card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: border-color 0.2s;
+  background: var(--color-panel);
+  border: 1px solid var(--color-orange);
+  border-radius: 4px; overflow: hidden;
+  box-shadow: 0 0 20px rgba(255,122,24,0.18);
+  transition: box-shadow 0.18s, transform 0.18s;
 }
-.project-card:hover { border-color: var(--color-accent); }
-.project-card__img { width: 100%; height: 200px; object-fit: cover; }
-.project-card__body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
-.project-card__title { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
-.project-card__desc { color: var(--color-muted); font-size: 0.9rem; line-height: 1.6; }
+.project-card:hover { box-shadow: 0 0 28px rgba(255,122,24,0.45); transform: translateY(-3px); }
+.project-card__bar {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 0.7rem; background: #120c06;
+  border-bottom: 1px solid var(--color-orange);
+  font-size: 0.7rem; color: var(--color-orange); font-family: var(--font-mono);
+}
+.tl-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.tl-r { background: #ff5f56; } .tl-y { background: #ffbd2e; } .tl-g { background: #27c93f; }
+.project-card__path { margin-left: 0.5rem; }
+.project-card__img { width: 100%; height: 180px; object-fit: cover; }
+.project-card__body { padding: 1.1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.project-card__title { font-size: 1rem; font-weight: 700; color: var(--color-text); }
+.project-card__desc { color: var(--color-muted); font-size: 0.85rem; line-height: 1.6; }
 .project-card__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .project-card__links { display: flex; gap: 1rem; flex-wrap: wrap; }
-.project-card__links a { color: var(--color-accent); font-size: 0.875rem; font-weight: 500; }
+.project-card__links a { color: var(--color-accent); font-size: 0.8rem; font-weight: 500; }
+.project-card__links a:hover { text-shadow: var(--glow-cyan); text-decoration: none; }
 .projects__more { margin-top: 2.5rem; text-align: center; }
-.btn--ghost {
-  display: inline-block;
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.btn--ghost:hover { border-color: var(--color-accent); text-decoration: none; }
 </style>

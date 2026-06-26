@@ -2,7 +2,8 @@
 ---
 <section class="about" id="about">
   <div class="container">
-    <h2>About me</h2>
+    <p class="label">about</p>
+    <h2 class="glow">About me</h2>
     <div class="about__grid">
       <div class="about__text">
         <p>
@@ -30,18 +31,4 @@
 .about__grid { max-width: 720px; }
 .about__text { display: flex; flex-direction: column; gap: 1.25rem; }
 .about__text p { color: var(--color-muted); line-height: 1.8; }
-.btn--ghost {
-  display: inline-block;
-  padding: 0.75rem 1.75rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  border: 1px solid var(--color-border);
-  color: var(--color-text);
-  text-decoration: none;
-  transition: all 0.2s;
-  align-self: flex-start;
-  margin-top: 0.5rem;
-}
-.btn--ghost:hover { border-color: var(--color-accent); text-decoration: none; }
 </style>

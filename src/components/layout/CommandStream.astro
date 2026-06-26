@@ -1,0 +1,72 @@
+---
+// Fixed, non-interactive background: horizontally-scrolling DevOps command
+// streams + faint circuit grid. Rows are generated at build time; the inline
+// script only varies speeds. Honors prefers-reduced-motion.
+const COMMANDS = [
+  '$ kubectl get pods -A', '$ terraform apply --auto-approve', '$ docker build -t app:latest .',
+  '$ git push origin main', '$ wrangler deploy --name infra-folio', '$ helm upgrade --install grafana ./chart',
+  '$ argocd app sync prod', '$ ansible-playbook site.yml', '$ aws s3 sync ./dist s3://media',
+  '$ journalctl -fu api-worker', '$ kubectl rollout status deploy/web', '$ curl -s /healthz | jq .',
+  '$ make deploy ENV=prod', '$ flux reconcile source git', '$ kubectl logs -f pod/og-worker',
+  '$ terraform plan -out tfplan', '$ docker compose up -d', '$ vault kv get secret/db',
+]
+const ROWS = 16
+function row() {
+  const n = 6
+  const parts = []
+  for (let i = 0; i < n; i++) parts.push(COMMANDS[Math.floor(Math.random() * COMMANDS.length)])
+  return parts.join('   [✓] ok   ')
+}
+const rows = Array.from({ length: ROWS }, () => row())
+---
+<div class="cmd-bg" aria-hidden="true">
+  <div class="circuit"></div>
+  <div class="streams">
+    {rows.map((text, i) => (
+      <div class="cmd-row" style={`top:${((i / ROWS) * 100).toFixed(2)}%`} data-i={i}>
+        <span class="seg">{text}</span><span class="seg">{text}</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+.cmd-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.circuit {
+  position: absolute; inset: 0; opacity: 0.10;
+  background-image:
+    linear-gradient(var(--color-accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-accent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 30%, #000 30%, transparent 80%);
+          mask-image: radial-gradient(ellipse 70% 70% at 50% 30%, #000 30%, transparent 80%);
+}
+.streams {
+  position: absolute; inset: 0; opacity: 0.13;
+  -webkit-mask-image: radial-gradient(ellipse 85% 80% at 50% 40%, #000 35%, transparent 92%);
+          mask-image: radial-gradient(ellipse 85% 80% at 50% 40%, #000 35%, transparent 92%);
+}
+.cmd-row {
+  position: absolute; left: 0; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 13px; color: var(--color-accent);
+  will-change: transform; animation: streamL 40s linear infinite;
+}
+.cmd-row .seg { display: inline-block; padding-right: 3rem; }
+@keyframes streamL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .cmd-row { animation: none; transform: translateX(-10%); }
+}
+</style>
+
+<script>
+  // Vary speed per row for a parallax feel. Respect reduced-motion.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!reduce) {
+    document.querySelectorAll<HTMLElement>('.cmd-row').forEach((el) => {
+      const dur = (26 + Math.random() * 30).toFixed(1)
+      el.style.animationDuration = `${dur}s`
+      el.style.animationDelay = `${(-Math.random() * 30).toFixed(1)}s`
+    })
+  }
+</script>

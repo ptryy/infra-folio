@@ -34,7 +34,7 @@ export default function Comments({ repo, repoId, categoryId }: Props) {
   return (
     <div
       ref={ref}
-      style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid var(--color-border)' }}
+      style={{ marginTop: '3rem', paddingTop: '2rem', borderTop: '1px solid rgba(34,227,255,0.18)' }}
     />
   )
 }

@@ -22,12 +22,13 @@ function validate(form: FormState): FormErrors {
 
 const fieldStyle: React.CSSProperties = {
   width: '100%',
-  padding: '0.75rem',
-  background: 'var(--color-surface)',
-  border: '1px solid var(--color-border)',
-  borderRadius: '8px',
-  color: 'var(--color-text)',
-  fontSize: '0.95rem',
+  padding: '0.7rem 0.8rem',
+  background: '#0a0d14',
+  border: '1px solid rgba(34,227,255,0.35)',
+  borderRadius: '3px',
+  color: '#cfe8f0',
+  fontSize: '0.9rem',
+  fontFamily: "var(--font-mono, monospace)",
   outline: 'none',
 }
 
@@ -40,7 +41,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 const errorStyle: React.CSSProperties = {
-  color: '#ef4444',
+  color: '#ff7a18',
   fontSize: '0.8rem',
   marginTop: '0.25rem',
 }
@@ -88,8 +89,8 @@ export default function ContactForm() {
 
   if (success) {
     return (
-      <div style={{ padding: '2rem', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '12px', textAlign: 'center' }}>
-        <p style={{ color: '#10b981', fontWeight: 600, fontSize: '1.1rem' }}>Message sent!</p>
+      <div style={{ padding: '2rem', background: 'rgba(57,255,138,0.1)', border: '1px solid rgba(57,255,138,0.3)', borderRadius: '3px', textAlign: 'center' }}>
+        <p style={{ color: '#39ff8a', fontWeight: 600, fontSize: '1.1rem' }}>Message sent!</p>
         <p style={{ color: 'var(--color-muted)', marginTop: '0.5rem', fontSize: '0.9rem' }}>
           Thanks for reaching out. I'll get back to you within 24–48 hours.
         </p>
@@ -149,17 +150,11 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={submitting}
+        className="btn btn--primary"
         style={{
           padding: '0.75rem 2rem',
-          background: submitting ? 'var(--color-border)' : 'var(--color-accent)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '8px',
-          fontWeight: 600,
-          fontSize: '0.95rem',
           cursor: submitting ? 'not-allowed' : 'pointer',
           alignSelf: 'flex-start',
-          transition: 'background 0.2s',
         }}
       >
         {submitting ? 'Sending…' : 'Send message'}
