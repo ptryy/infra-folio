@@ -33,6 +33,8 @@
   - `getCollection('blog')` returns posts with `{ title, date, tags, coverImage, excerpt }` frontmatter
   - `getCollection('projects')` returns projects with `{ title, description, tags, demoUrl, repoUrl, media, featured }` frontmatter
 
+> **Note (added post-merge):** the sample content is authored as `.mdx`, which requires the `@astrojs/mdx` integration. Without it, Astro **silently** drops `.mdx` entries — `getCollection` returns an empty array, the build only emits a `"collection ... does not exist or is empty"` warning (not an error), and the blog/projects listing pages render empty. Install and register it: `pnpm add @astrojs/mdx` and add `mdx()` to `integrations` in `astro.config.mjs`.
+
 - [ ] **Step 1: Write the failing type check**
 
 At this point `src/content/config.ts` doesn't exist; running `pnpm check` will pass (no schema = no validation). The "failure" here is that sample content without a schema would silently ignore type errors. We write the schema first, then sample content, then verify.

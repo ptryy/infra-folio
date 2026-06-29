@@ -2,29 +2,43 @@
 // Fixed, non-interactive background: horizontally-scrolling DevOps command
 // streams + faint circuit grid. Rows are generated at build time; the inline
 // script only varies speeds. Honors prefers-reduced-motion.
-const COMMANDS = [
-  '$ kubectl get pods -A', '$ terraform apply --auto-approve', '$ docker build -t app:latest .',
-  '$ git push origin main', '$ wrangler deploy --name infra-folio', '$ helm upgrade --install grafana ./chart',
-  '$ argocd app sync prod', '$ ansible-playbook site.yml', '$ aws s3 sync ./dist s3://media',
-  '$ journalctl -fu api-worker', '$ kubectl rollout status deploy/web', '$ curl -s /healthz | jq .',
-  '$ make deploy ENV=prod', '$ flux reconcile source git', '$ kubectl logs -f pod/og-worker',
-  '$ terraform plan -out tfplan', '$ docker compose up -d', '$ vault kv get secret/db',
+// Each command is a [command, flag] pair so the flag can be colored
+// independently, matching the approved mockup's token coloring.
+const COMMANDS: [string, string][] = [
+  ['kubectl get pods -A', '-A'], ['terraform apply', '--auto-approve'], ['docker build -t app:latest .', ''],
+  ['git push origin', 'main'], ['wrangler deploy', '--name infra-folio'], ['helm upgrade --install grafana', './chart'],
+  ['argocd app sync', 'prod'], ['ansible-playbook', 'site.yml'], ['aws s3 sync ./dist', 's3://media'],
+  ['gcloud compute instances', 'list'], ['systemctl restart', 'nginx'], ['journalctl -fu', 'api-worker'],
+  ['kubectl rollout status', 'deploy/web'], ['curl -s /healthz |', 'jq .'], ['ssh deploy@edge-01', '-p 22'],
+  ['make deploy', 'ENV=prod'], ['vault kv get', 'secret/db'], ['kubectl logs -f', 'pod/og-worker'],
+  ['terraform plan', '-out tfplan'], ['docker compose up', '-d'], ['flux reconcile', 'source git'],
 ]
+const OUTPUTS = ['[✓] deploy -> success', '[✓] 200 OK', '[✓] applied', '[✓] synced', '[i] cache hit']
 const ROWS = 16
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 function row() {
-  const n = 6
-  const parts = []
-  for (let i = 0; i < n; i++) parts.push(COMMANDS[Math.floor(Math.random() * COMMANDS.length)])
-  return parts.join('   [✓] ok   ')
+  // 5–7 segments per row; output appended only ~half the time (sparse, varied).
+  const n = 5 + Math.floor(Math.random() * 3)
+  const parts: string[] = []
+  for (let i = 0; i < n; i++) {
+    const [cmd, flag] = COMMANDS[Math.floor(Math.random() * COMMANDS.length)]
+    const out =
+      Math.random() > 0.5
+        ? ` <span class="ok">${esc(OUTPUTS[Math.floor(Math.random() * OUTPUTS.length)])}</span>`
+        : ''
+    const flagSpan = flag ? ` <span class="flag">${esc(flag)}</span>` : ''
+    parts.push(`<span class="pmt">$</span> ${esc(cmd)}${flagSpan}${out}`)
+  }
+  return parts.join('&nbsp;&nbsp;&nbsp;')
 }
 const rows = Array.from({ length: ROWS }, () => row())
 ---
 <div class="cmd-bg" aria-hidden="true">
   <div class="circuit"></div>
   <div class="streams">
-    {rows.map((text, i) => (
+    {rows.map((html, i) => (
       <div class="cmd-row" style={`top:${((i / ROWS) * 100).toFixed(2)}%`} data-i={i}>
-        <span class="seg">{text}</span><span class="seg">{text}</span>
+        <span class="seg" set:html={html}></span><span class="seg" set:html={html}></span>
       </div>
     ))}
   </div>
@@ -52,6 +66,10 @@ const rows = Array.from({ length: ROWS }, () => row())
   will-change: transform; animation: streamL 40s linear infinite;
 }
 .cmd-row .seg { display: inline-block; padding-right: 3rem; }
+/* Injected via set:html, so these spans need :global to receive the colors. */
+.cmd-row :global(.pmt) { color: var(--color-accent-2); }
+.cmd-row :global(.flag) { color: var(--color-magenta); }
+.cmd-row :global(.ok) { color: var(--color-accent-2); }
 @keyframes streamL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 @media (prefers-reduced-motion: reduce) {
